@@ -6,7 +6,7 @@ export class Planet {
 		this.color = color;
 		this.radius = radius;
 		this.distance = distance;
-		this.speed = speed;
+		this.speed = speed *1000;
 		this.name = name;
 		this.mesh = this.createMesh();
 	}

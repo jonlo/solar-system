@@ -1,4 +1,4 @@
-import { WebGLRenderer, Scene, PerspectiveCamera, Matrix4, Math } from 'three';
+import { WebGLRenderer, Scene, PerspectiveCamera, Matrix4, Math, EllipseCurve, LineBasicMaterial, Line, BufferGeometry } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Planet } from './planet.js';
 
@@ -24,7 +24,7 @@ function main() {
 	// scene
 	scene = new Scene();
 	// camera
-	camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+	camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
 	camera.position.set(10, 10, 15);
 
 	//controls
@@ -37,20 +37,34 @@ function main() {
 };
 
 function createPlanets() {
-
-	planets.push(new Planet(0xffff00, 15, 0, 0, 'sun'));
-	planets.push(new Planet(0xffffff, 0.1, 20, 0.1, 'mercury'));
-	planets.push(new Planet(0xffffff, 1, 30, 0.1, 'venus'));
-	planets.push(new Planet(0xffffff, 1, 40, 0.1, 'earth'));
-	planets.push(new Planet(0xffffff, 1, 50, 0.1, 'mars'));
-	planets.push(new Planet(0xffffff, 1, 65, 0.1, 'jupiter'));
-	planets.push(new Planet(0xffffff, 1, 80, 0.1, 'saturn'));
-	planets.push(new Planet(0xffffff, 1, 95, 0.1, 'uranus'));
-	planets.push(new Planet(0xffffff, 1, 100, 0.1, 'neptune'));
-	planets.push(new Planet(0xffffff, 1, 125, 0.1, 'pluto'));
+	const curve = new EllipseCurve(
+		0,  0,            // ax, aY
+		100, 100,           // xRadius, yRadius
+		0,  2 * Math.PI,  // aStartAngle, aEndAngle
+		false,            // aClockwise
+		0                 // aRotation
+	);
+	
+	const points = curve.getPoints( 50 );
+	const geometry = new BufferGeometry().setFromPoints( points );
+	const material = new LineBasicMaterial( { color : 0xff0000 } );
+	// Create the final object to add to the scene
+	const ellipse = new Line( geometry, material );
+	scene.add(ellipse);
+	planets.push(new Planet(0xffff00, 100, 0, 0, 'sun'));
+	planets.push(new Planet(0xffffff, 4, 500, 1 / 88, 'mercury'));
+	planets.push(new Planet(0xffffff, 7, 800, 1 / 225, 'venus'));
+	planets.push(new Planet(0x0000ff, 7, 1400, 1 / 365, 'earth'));
+	planets.push(new Planet(0xff0000, 7, 2000, 1 / 730, 'mars'));
+	planets.push(new Planet(0xff5500, 20, 5000, 1 / 4328, 'jupiter'));
+	planets.push(new Planet(0xffffff, 15, 10000, 1 / 10752, 'saturn'));
+	planets.push(new Planet(0xffffff, 11, 12000, 1 / 30660, 'uranus'));
+	planets.push(new Planet(0xffffff, 9, 13000, 1 / 60225, 'neptune'));
+	planets.push(new Planet(0xffffff, 1, 15000, 1 / 60225, 'pluto'));
 
 	for (const planet of planets) {
 		scene.add(planet.mesh);
+	
 		// rotateAboutPoint(planet.mesh, new Vector3(0, 0, 0), new Vector3(1, 0, 0), Math.PI / 2, true);
 	}
 
